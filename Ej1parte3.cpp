@@ -21,6 +21,8 @@ void drawMultipleCubes5();
 void drawMultipleCubes6();
 void drawMultipleCubes7();
 void drawMultipleCubes8();
+void drawMultipleCubes9();
+void drawMultipleCubes10();
 GLuint initVBO(int, GLfloat *);
 GLuint initVBO(int, GLubyte *);
 
@@ -392,6 +394,7 @@ void drawMultipleCubes4() {
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 }
+
 void drawMultipleCubes5()
 {
 	const int N = 40; // N�mero de cubos en cada eje
@@ -533,6 +536,66 @@ void drawMultipleCubes8()
 	}
 	glBindVertexArray(0);
 }
+void drawMultipleCubes9() {
+	const int N = 40; // N�mero de cubos en cada eje
+	const float RangoIni = -1.0f;
+	const float RangoFin = 1.0f;
+	float x, y, z;
+	float scale = (RangoFin - RangoIni) / (N * 3);
+	
+
+	glBindVertexArray(vaoHandle2);
+
+	for (int i = 0; i < N; i++)
+	{
+		x = RangoIni + i * (RangoFin - RangoIni) / (N - 1);
+		for (int j = 0; j < N; j++)
+		{
+			y = RangoIni + j * (RangoFin - RangoIni) / (N - 1);
+			for (int k = 0; k < N; k++)
+			{
+				z = RangoIni + k * (RangoFin - RangoIni) / (N - 1);
+				glPushMatrix();
+				glTranslatef(x, y, z);
+				glScalef(scale, scale, scale);
+				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);
+
+				glPopMatrix();
+			}
+		}
+	}
+	glBindVertexArray(0);
+}
+void drawMultipleCubes10() {
+	const int N = 40; // N�mero de cubos en cada eje
+	const float RangoIni = -1.0f;
+	const float RangoFin = 1.0f;
+	float x, y, z;
+	float scale = (RangoFin - RangoIni) / (N * 3);
+
+
+	glBindVertexArray(vaoHandle3);
+
+	for (int i = 0; i < N; i++)
+	{
+		x = RangoIni + i * (RangoFin - RangoIni) / (N - 1);
+		for (int j = 0; j < N; j++)
+		{
+			y = RangoIni + j * (RangoFin - RangoIni) / (N - 1);
+			for (int k = 0; k < N; k++)
+			{
+				z = RangoIni + k * (RangoFin - RangoIni) / (N - 1);
+				glPushMatrix();
+				glTranslatef(x, y, z);
+				glScalef(scale, scale, scale);
+				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);
+
+				glPopMatrix();
+			}
+		}
+	}
+	glBindVertexArray(0);
+}
 
 GLuint initVBO(int dataSize, GLfloat *vertexData) {
 	GLuint VBOBuffers;
@@ -551,6 +614,7 @@ GLuint initVBO(int dataSize, GLubyte *vertexData) {
 	return VBOBuffers;
 }
 void initVAO() {
+	///////////////////////////////////// ->> 7
 	glGenVertexArrays(1, &vaoHandle1);
 	glBindVertexArray(vaoHandle1);
 
@@ -561,6 +625,37 @@ void initVAO() {
 	glVertexPointer(3, GL_FLOAT, 0, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo2);
 	glColorPointer(3, GL_FLOAT, 0, 0);
+
+	glBindVertexArray(0);
+
+	//////////////////////////////////// ->> 8
+
+	glGenVertexArrays(1, &vaoHandle2);
+	glBindVertexArray(vaoHandle2);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo3);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo4);
+	glColorPointer(3, GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo5);
+
+	glBindVertexArray(0);
+
+	//////////////////////////////////// ->> 9
+
+	glGenVertexArrays(1, &vaoHandle3);
+	glBindVertexArray(vaoHandle3);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo6);
+	glVertexPointer(3, GL_FLOAT, 24, 0);
+	glColorPointer(3, GL_FLOAT, 24, (char*)NULL + 12);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo7);
 
 	glBindVertexArray(0);
 }
@@ -633,9 +728,13 @@ void display()
 		drawMultipleCubes7();
 		break;
 	case 7:
-		
 		drawMultipleCubes8();
 		break;
+	case 8:
+		drawMultipleCubes9();
+		break;
+	case 9:
+		drawMultipleCubes10();
 	}
 
 	printFPS();
