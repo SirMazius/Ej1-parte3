@@ -8,6 +8,7 @@ float fps = 0;
 int currentTime = 0, previousTime = 0;
 int selector = 0;
 int vbo1, vbo2, vbo3, vbo4, vbo5, vbo6, vbo7;
+GLuint vaoHandle1, vaoHandle2, vaoHandle3;
 void calculateFPS();
 void printFPS();
 
@@ -19,6 +20,7 @@ void drawMultipleCubes4();
 void drawMultipleCubes5();
 void drawMultipleCubes6();
 void drawMultipleCubes7();
+void drawMultipleCubes8();
 GLuint initVBO(int, GLfloat *);
 GLuint initVBO(int, GLubyte *);
 
@@ -499,6 +501,39 @@ void drawMultipleCubes7() {
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 }
+
+void drawMultipleCubes8()
+{
+	const int N = 40; // N�mero de cubos en cada eje
+	const float RangoIni = -1.0f;
+	const float RangoFin = 1.0f;
+	float x, y, z;
+	float scale = (RangoFin - RangoIni) / (N * 3);
+	
+	glBindVertexArray(vaoHandle1);
+	//glDrawArrays(GL_TRIANGLES, 0, 36);
+	
+
+	for (int i = 0; i < N; i++)
+	{
+		x = RangoIni + i * (RangoFin - RangoIni) / (N - 1);
+		for (int j = 0; j < N; j++)
+		{
+			y = RangoIni + j * (RangoFin - RangoIni) / (N - 1);
+			for (int k = 0; k < N; k++)
+			{
+				z = RangoIni + k * (RangoFin - RangoIni) / (N - 1);
+				glPushMatrix();
+				glTranslatef(x, y, z);
+				glScalef(scale, scale, scale);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+				glPopMatrix();
+			}
+		}
+	}
+	glBindVertexArray(0);
+}
+
 GLuint initVBO(int dataSize, GLfloat *vertexData) {
 	GLuint VBOBuffers;
 	glGenBuffers(1, &VBOBuffers);
@@ -507,7 +542,6 @@ GLuint initVBO(int dataSize, GLfloat *vertexData) {
 	//delete [] vertexData; 
 	return VBOBuffers;
 }
-
 GLuint initVBO(int dataSize, GLubyte *vertexData) {
 	GLuint VBOBuffers;
 	glGenBuffers(1, &VBOBuffers);
@@ -516,12 +550,40 @@ GLuint initVBO(int dataSize, GLubyte *vertexData) {
 	//delete [] vertexData; 
 	return VBOBuffers;
 }
+void initVAO() {
+	glGenVertexArrays(1, &vaoHandle1);
+	glBindVertexArray(vaoHandle1);
 
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo1);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo2);
+	glColorPointer(3, GL_FLOAT, 0, 0);
+
+	glBindVertexArray(0);
+}
 
 
 bool init()
 {
-	
+	vbo1 = initVBO(sizeof(vertices1) / sizeof(*vertices1), vertices1);
+	vbo2 = initVBO(sizeof(colores1) / sizeof(*colores1), colores1);
+
+	vbo3 = initVBO(sizeof(vertices2) / sizeof(*vertices2), vertices2);
+	vbo4 = initVBO(sizeof(colores2) / sizeof(*colores2), colores2);
+	vbo5 = initVBO(sizeof(indices) / sizeof(*indices), indices);
+
+	vbo6 = initVBO(sizeof(vertices3) / sizeof(*vertices3), vertices3);
+	vbo7 = initVBO(sizeof(indices) / sizeof(*indices), indices);
+
+	initVAO();
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
 	glClearColor(0.93f, 0.93f, 0.93f, 0.0f);
 
 	glEnable(GL_DEPTH_TEST);
@@ -529,7 +591,7 @@ bool init()
 	glClearDepth(1.0f);
 
 	glShadeModel(GL_SMOOTH);
-	
+
 	return true;
 }
 
@@ -546,7 +608,7 @@ void display()
 	glRotatef(xrot, 1.0f, 0.0f, 0.0f);
 	glRotatef(yrot, 0.0f, 1.0f, 0.0f);
 
-	
+
 	//draw1Cube();
 	switch (selector) {
 	case 0:
@@ -569,6 +631,10 @@ void display()
 		break;
 	case 6:
 		drawMultipleCubes7();
+		break;
+	case 7:
+		
+		drawMultipleCubes8();
 		break;
 	}
 
@@ -629,21 +695,29 @@ void keyboard(unsigned char key, int x, int y)
 		break;
 	case '4':
 		//2vbo
-		vbo1 = initVBO(sizeof(vertices1) / sizeof(*vertices1), vertices1);
-		vbo2 = initVBO(sizeof(colores1) / sizeof(*colores1), colores1);
+
 		selector = 4;
 		break;
 	case '5':
-		vbo3 = initVBO(sizeof(vertices2) / sizeof(*vertices2), vertices2);
-		vbo4 = initVBO(sizeof(colores2) / sizeof(*colores2), colores2);
-		vbo5 = initVBO(sizeof(indices) / sizeof(*indices), indices);
+
 		//3vbo
 		selector = 5;
 		break;
 	case '6':
-		vbo6 = initVBO(sizeof(vertices3) / sizeof(*vertices3), vertices3);
-		vbo7 = initVBO(sizeof(indices) / sizeof(*indices), indices);
+
 		selector = 6;
+		//2vbo
+		break;
+	case '7':
+		selector = 7;
+		//2vbo
+		break;
+	case '8':
+		selector = 8;
+		//2vbo
+		break;
+	case '9':
+		selector = 9;
 		//2vbo
 		break;
 	}
